@@ -1,0 +1,64 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Event {
+  createdAt        DateTime          @default(now())
+  description      String?
+  endDate          DateTime?
+  id               String            @id @default(cuid())
+  location         String?
+  name             String?
+  organizer        String?
+  price            Float?
+  socialMediaPosts SocialMediaPost[]
+  startDate        DateTime?
+  updatedAt        DateTime          @updatedAt
+}
+
+model Venue {
+  address        String?
+  createdAt      DateTime @default(now())
+  id             String   @id @default(cuid())
+  mapCoordinates Json?
+  name           String?
+  updatedAt      DateTime @updatedAt
+}
+
+model Profile {
+  avatar    Json?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  theme     String?
+  updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model SocialMediaPost {
+  content   String?
+  createdAt DateTime  @default(now())
+  event     Event?    @relation(fields: [eventId], references: [id])
+  eventId   String?
+  id        String    @id @default(cuid())
+  timestamp DateTime?
+  updatedAt DateTime  @updatedAt
+}
+
+model User {
+  createdAt DateTime  @default(now())
+  email     String?   @unique
+  firstName String?
+  id        String    @id @default(cuid())
+  lastName  String?
+  password  String
+  profiles  Profile[]
+  roles     Json
+  updatedAt DateTime  @updatedAt
+  username  String    @unique
+}
